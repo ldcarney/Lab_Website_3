@@ -27,7 +27,7 @@ const dbConfig = {
 	port: 5432,
 	database: 'football_db',
 	user: 'postgres',
-	password: 'password'
+	password: '$Quoyle123'
 };
 
 var db = pgp(dbConfig);
@@ -221,36 +221,92 @@ app.get('/team_stats', function(req, res) {
             })
         })
 });
-/*app.get('/home/team_stats', function(req, res) {
-  var stats_choice = req.query.stats_table;
-  var stats_options =  'select * from football_games;';
-  var stats_message = "select home_score from football_games where home_score > visitor_score;";
+
+//Player info button
+app.get('/player_info', function(req, res) {
+var query = 'SELECT * FROM football_players;';
+db.any(query)
+    .then(function (rows) {
+        res.render('pages/player_info',{
+      my_title: "Player Page",
+      data: rows,
+      name: '',
+      year: '',
+      major: '',
+      games_played: '',
+      passing_yards: '',
+      rushing_yards: '',
+      receiving_yards: '',
+      image: ''
+    })
+
+    })
+    .catch(function (err) {
+        // display error message in case an error
+        console.log('error', err);
+        res.render('pages/player_info',{
+      my_title: "Player Page",
+      data: '',
+      name: '',
+      year: '',
+      major: '',
+      games_played: '',
+      passing_yards: '',
+      rushing_yards: '',
+      receiving_yards: '',
+      image: ''
+    })
+  })
+});
+
+//Player info page
+app.get('/player_info/post', function(req, res) {
+  var chosen_player = req.query.player_choice;
+  var all = "SELECT * FROM football_players;";
+  var stats = "SELECT * FROM football_players WHERE id = '" + chosen_player + "';";
+  var games = "SELECT count(players) FROM football_games WHERE '" + chosen_player +"' = ANY(players);";
   db.task('get-everything', task => {
         return task.batch([
-            task.any(stats_options),
-            task.any(stats_message)
+            task.any(all),
+            task.any(stats),
+            task.any(games)
         ]);
     })
     .then(info => {
-      res.render('pages/team_stats',{
-        my_title: "Stats Page",
+      res.render('pages/player_info',{
+        my_title: "Player Page",
         data: info[0],
-        stats: stats_choice,
-        stats_msg: info[1][0].stats_msg
+        name: chosen_player,
+        year: info[1][0].year,
+        major: info[1][0].major,
+        games_played: info[2][0].count,
+        passing_yards: info[1][0].passing_yards,
+        rushing_yards: info[1][0].rushing_yards,
+        receiving_yards: info[1][0].receiving_yards,
+        image: info[1][0].img_src
       })
     })
     .catch(err => {
         // display error message in case an error
             console.log('error', err);
-            response.render('pages/team_stats', {
-                title: 'Stats Page',
+            response.render('pages/player_info', {
+                title: 'Player Page',
                 data: '',
-                stats: '',
-                stats_msg: ''
+                name: '',
+                year: '',
+                major: '',
+                games_played: '',
+                passing_yards: '',
+                rushing_yards: '',
+                receiving_yards: '',
+                image: ''
             })
     });
+});
 
-});*/
+
+
+
 
 
 
