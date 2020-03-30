@@ -27,7 +27,7 @@ const dbConfig = {
 	port: 5432,
 	database: 'football_db',
 	user: 'postgres',
-	password: '$Quoyle123'
+	password: 'password'
 };
 
 var db = pgp(dbConfig);
@@ -303,11 +303,6 @@ app.get('/player_info/post', function(req, res) {
             })
     });
 });
-
-
-
-
-
 
 
 app.listen(3000);
